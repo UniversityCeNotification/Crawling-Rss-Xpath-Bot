@@ -11,5 +11,9 @@ fi
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python main.py
+while true
+do
+  python main.py
+  sleep 60
+done
 deactivate
