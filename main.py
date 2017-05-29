@@ -18,7 +18,10 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def crawl(url):
+def crawlXpath():
+    return
+
+def crawlRss(url):
     if url == '' or not url.startswith('http'):
         print(bcolors.FAIL + 'Error: url can not be empty string or url should startwith http' + bcolors.ENDC)
         return
@@ -43,8 +46,14 @@ if __name__ == '__main__':
     for File in Files:
         with open(File) as FileJsonData:
             d = json.load(FileJsonData)
+            Site = d.get('Site', 'Nope')
+            SiteLink = d.get('SiteLink', 'Nope')
+            SiteRssLink = d.get('SiteRssLink', 'Nope')
             print(bcolors.OKGREEN + '[+] Crawling Site:\n'+
-                ' SiteName: ' + d.get('Site', 'Nope') +
-                ' | SiteLink: ' + d.get('SiteLink', 'Nope') +
-                ' | SiteRssLink: ' + d.get('SiteRssLink', 'Nope') + bcolors.ENDC)
-            crawl(d.get('SiteRssLink', ''))
+                ' SiteName: ' + Site +
+                ' | SiteLink: ' + SiteLink +
+                ' | SiteRssLink: ' + SiteRssLink + bcolors.ENDC)
+            if not SiteRssLink == '':
+                crawlRss(SiteRssLink)
+            else:
+                crawlXpath(d)
