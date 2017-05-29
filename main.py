@@ -1,5 +1,14 @@
 import json
 import os
+import feedparser
+
+def crawl(url):
+    d = feedparser.parse(url)
+    for entry in d['entries']:
+        print(entry['title'])
+        print(entry['link'])
+
+    print('[-] Crawling Site Finished')
 
 if __name__ == '__main__':
     Files = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json')]
@@ -7,4 +16,5 @@ if __name__ == '__main__':
     for File in Files:
         with open(File) as FileJsonData:
             d = json.load(FileJsonData)
-            print('[+] SiteName: ' + d.get('Site', 'Nope') + ' | SiteLink: ' + d.get('SiteLink', 'Nope') + ' | SiteRssLink: ' + d.get('SiteRssLink', 'Nope'))
+            print('[+] Crawling, SiteName: ' + d.get('Site', 'Nope') + ' | SiteLink: ' + d.get('SiteLink', 'Nope') + ' | SiteRssLink: ' + d.get('SiteRssLink', 'Nope'))
+            crawl(d.get('SiteRssLink', ''))
