@@ -1,3 +1,5 @@
+from lxml import html
+import requests
 import json
 import os
 import feedparser
@@ -18,8 +20,14 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def crawlXpath():
-    return
+def crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath):
+    page = requests.get(SiteLink)
+    tree = html.fromstring(page.content)
+    items = tree.xpath(ListXpath)
+    for item in items:
+        url = item.xpath(UrlXpath)[0]
+        title = item.xpath(TitleXpath)[0]
+        print(url, title)
 
 def crawlRss(url):
     if url == '' or not url.startswith('http'):
@@ -49,6 +57,9 @@ if __name__ == '__main__':
             Site = d.get('Site', 'Nope')
             SiteLink = d.get('SiteLink', 'Nope')
             SiteRssLink = d.get('SiteRssLink', 'Nope')
+            ListXpath = d.get('ListXpath', 'Nope')
+            UrlXpath = d.get('UrlXpath', 'Nope')
+            TitleXpath = d.get('TitleXpath', 'Nope')
             print(bcolors.OKGREEN + '[+] Crawling Site:\n'+
                 ' SiteName: ' + Site +
                 ' | SiteLink: ' + SiteLink +
@@ -56,4 +67,4 @@ if __name__ == '__main__':
             if not SiteRssLink == '':
                 crawlRss(SiteRssLink)
             else:
-                crawlXpath(d)
+                crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath)
