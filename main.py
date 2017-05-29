@@ -20,6 +20,12 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def insertMongoDb(data):
+    result = crawlers.find_one({'link': data['link']})
+    if not result:
+        print('New Link crawled and inserted mongodb')
+        crawlers.insert_one(data)
+
 def crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath):
     page = requests.get(SiteLink)
     tree = html.fromstring(page.content)
@@ -27,7 +33,14 @@ def crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath):
     for item in items:
         url = item.xpath(UrlXpath)[0]
         title = item.xpath(TitleXpath)[0]
-        print(url, title)
+        data = {
+            'title': title,
+            'link': url,
+            'status': 'new'
+        }
+        insertMongoDb(data)
+
+    print(bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + bcolors.OKGREEN)
 
 def crawlRss(url):
     if url == '' or not url.startswith('http'):
@@ -40,12 +53,9 @@ def crawlRss(url):
             'link': entry['link'],
             'status': 'new'
         }
-        result = crawlers.find_one({'link': entry['link']})
-        if not result:
-            print('New Link crawled')
-            crawlers.insert_one(data)
+        insertMongoDb(data)
 
-    print(bcolors.OKGREEN + '[-] Crawling Site Finished' + bcolors.OKGREEN)
+    print(bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + bcolors.OKGREEN)
 
 if __name__ == '__main__':
     print(bcolors.OKBLUE + '\n[*] Program Started' + bcolors.ENDC)
