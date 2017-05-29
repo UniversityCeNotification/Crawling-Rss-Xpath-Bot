@@ -15,3 +15,14 @@ If your site does not have rss, you should write [xpath](https://duckduckgo.com/
   "TitleXpath": "a/text()"
 }
 ```
+
+<h4>University List or Site</h4>
+
+|       University                                          |       Crawling Site                       |  Status  |
+| --------------------------------------------------------- |:-----------------------------------------:|:--------:|
+| [Yildiz Technical](https://www.ce.yildiz.edu.tr/)         |  https://ytuce.maliayas.com/?type=rss     |   Ok     |
+| [Istanbul](http://ce.istanbul.edu.tr/)                    |  http://ce.istanbul.edu.tr/               |   Nope   |
+| [Pamukkale](http://www.pamukkale.edu.tr/bilgisayar)       |  http://www.pamukkale.edu.tr/bilgisayar   |   WIP    |
+| [Istanbul Technical](http://www.bb.itu.edu.tr/)           |  http://www.bb.itu.edu.tr/                |   Nope   |
+| [Anadolu](https://anadolu.edu.tr)                         |  https://anadolu.edu.tr/duyurular         |   Nope   |
+| [Reddit Python](https://www.reddit.com/r/Python/)         |  https://www.reddit.com/r/Python/.rss     |   Ok     |
