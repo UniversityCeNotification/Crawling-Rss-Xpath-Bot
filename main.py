@@ -3,6 +3,9 @@ import os
 import feedparser
 
 def crawl(url):
+    if url == '' or not url.startswith('http'):
+        print('Error: url can not be empty string or url should startwith http')
+        return
     d = feedparser.parse(url)
     for entry in d['entries']:
         print(entry['title'])
