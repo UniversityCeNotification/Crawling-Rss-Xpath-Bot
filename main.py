@@ -1,6 +1,13 @@
 import json
 import os
 import feedparser
+from pymongo import MongoClient
+from dotenv import DotEnv
+dotenv = DotEnv('.env')
+
+client = MongoClient(dotenv.get('MongoDbUri', 'mongodb://localhost:27017'))
+db = client[dotenv.get('MongoDbName', 'rsscrawler')] # which database
+crawlers = db.crawlers  # which collection
 
 def crawl(url):
     if url == '' or not url.startswith('http'):
@@ -8,8 +15,15 @@ def crawl(url):
         return
     d = feedparser.parse(url)
     for entry in d['entries']:
-        print(entry['title'])
-        print(entry['link'])
+        data = {
+            'title': entry['title'],
+            'link': entry['link'],
+            'status': 'new'
+        }
+        result = crawlers.find_one({'link': entry['link']})
+        if not result:
+            print('New Link crawled')
+            crawlers.insert_one(data)
 
     print('[-] Crawling Site Finished')
 
