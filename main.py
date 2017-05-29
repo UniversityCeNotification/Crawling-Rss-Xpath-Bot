@@ -20,6 +20,12 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def pushRedis(data):
+    return
+
+def writeFile(data):
+    return
+
 def insertMongoDb(data):
     result = crawlers.find_one({'link': data['link']})
     if not result:
