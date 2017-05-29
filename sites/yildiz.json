@@ -1,5 +1,8 @@
 {
   "Site": "Yildiz Teknik University",
   "SiteLink": "https://ytuce.maliayas.com/",
-  "SiteRssLink": "https://ytuce.maliayas.com/?type=rss"
+  "SiteRssLink": "https://ytuce.maliayas.com/?type=rss",
+  "ListXpath": "//div[@class='text_title']",
+  "UrlXpath": "a/@href",
+  "TitleXpath": "a/text()"
 }
