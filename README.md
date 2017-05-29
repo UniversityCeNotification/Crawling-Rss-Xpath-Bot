@@ -3,6 +3,14 @@ Crawling rss or site, and inserting mongodb or writing file or pushing redis.
 
 If your site does not have rss, you should write [xpath](https://duckduckgo.com/?q=xpath+tutorial&t=ffab&ia=web)
 
+# How to try this repo
+
+```bash
+  $ # Just run init.sh file
+  $ bash init.sh          # Default, Crawler run every 60 second
+  $ bash init.sh 10       # Crawler run every 10 second
+```
+
 # Example Json
 
 ```
