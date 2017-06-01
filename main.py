@@ -65,21 +65,23 @@ def crawlRss(url):
 
 if __name__ == '__main__':
     print(bcolors.OKBLUE + '\n[*] Program Started' + bcolors.ENDC)
-    Files = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json')]
+    Files = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'empty.json']
     print(Files)
     for File in Files:
+        print(File)
         with open(File) as FileJsonData:
             d = json.load(FileJsonData)
-            Site = d.get('Site', 'Nope')
+            SiteName = d.get('SiteName', 'Nope')
             SiteLink = d.get('SiteLink', 'Nope')
             SiteRssLink = d.get('SiteRssLink', 'Nope')
-            ListXpath = d.get('ListXpath', 'Nope')
-            UrlXpath = d.get('UrlXpath', 'Nope')
-            TitleXpath = d.get('TitleXpath', 'Nope')
+            Xpath = d.get('Xpath', 'Nope')
+            ListXpath = Xpath.get('ListXpath', 'Nope')
+            UrlXpath = Xpath.get('UrlXpath', 'Nope')
+            TitleXpath = Xpath.get('TitleXpath', 'Nope')
             print(bcolors.OKGREEN + '[+] Crawling Site:\n'+
-                ' SiteName: ' + Site +
-                ' | SiteLink: ' + SiteLink +
-                ' | SiteRssLink: ' + SiteRssLink + bcolors.ENDC)
+                  ' SiteName: ' + SiteName +
+                  ' | SiteLink: ' + SiteLink +
+                  ' | SiteRssLink: ' + SiteRssLink + bcolors.ENDC)
             if not SiteRssLink == '':
                 crawlRss(SiteRssLink)
             else:
