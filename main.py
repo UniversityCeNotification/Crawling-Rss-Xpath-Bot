@@ -34,10 +34,11 @@ def insert_mongo_db(data):
     """ inserting data to mongodb """
     result = CRAWLERS.find_one({'link': data['link']})
     if not result:
+        print(data)
         print('New Link crawled and inserted mongodb')
         CRAWLERS.insert_one(data)
 
-def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath):
+def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpath):
     """ crawling url with xpaths """
     page = requests.get(site_link)
     tree = html.fromstring(page.content)
@@ -45,9 +46,11 @@ def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath):
     for item in items:
         url = item.xpath(url_xpath)[0]
         title = item.xpath(title_xpath)[0]
+        pubdate = item.xpath(pubdate_xpath)[0]
         data = {
             'title': title,
             'link': url,
+            'pubdate': pubdate,
             'status': 'new'
         }
         insert_mongo_db(data)
@@ -68,6 +71,7 @@ def crawl_with_rss(url):
         data = {
             'title': entry['title'],
             'link': entry['link'],
+            'pubdate': entry['updated'],
             'status': 'new'
         }
         insert_mongo_db(data)
@@ -89,15 +93,16 @@ if __name__ == '__main__':
             ListXpath = Xpath.get('ListXpath', 'Nope')
             UrlXpath = Xpath.get('UrlXpath', 'Nope')
             TitleXpath = Xpath.get('TitleXpath', 'Nope')
+            PubDateXpath = Xpath.get('PubDateXpath', 'Nope')
             print(
                 Bcolors.OKGREEN +
                 '[+] Crawling Site:\n'+
-                ' SiteName: ' + SiteName +
-                ' | SiteLink: ' + SiteLink +
-                ' | SiteRssLink: ' + SiteRssLink +
+                ' Name: ' + SiteName +
+                ' | Link: ' + SiteLink +
+                ' | RssLink: ' + SiteRssLink +
                 Bcolors.ENDC
             )
             if not SiteRssLink == '':
                 crawl_with_rss(SiteRssLink)
             else:
-                crawl_with_xpath(SiteLink, ListXpath, UrlXpath, TitleXpath)
+                crawl_with_xpath(SiteLink, ListXpath, UrlXpath, TitleXpath, PubDateXpath)
