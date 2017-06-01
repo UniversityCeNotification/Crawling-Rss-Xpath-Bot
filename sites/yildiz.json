@@ -1,8 +1,11 @@
 {
-  "Site": "Yildiz Teknik University",
+  "SiteName": "Yildiz Teknik University",
   "SiteLink": "https://ytuce.maliayas.com/",
   "SiteRssLink": "https://ytuce.maliayas.com/?type=rss",
-  "ListXpath": "//div[@class='text_title']",
-  "UrlXpath": "a/@href",
-  "TitleXpath": "a/text()"
+  "Xpath": {
+    "ListXpath": "//div[@class='item']",
+    "UrlXpath": "//div[@class='text_title']/a/@href",
+    "TitleXpath": "//div[@class='text_title']/a/text()",
+    "PubDateXpath": "//span[@class='date']/text()"
+  }
 }

@@ -1,5 +1,11 @@
 {
-  "Site": "Reddit Python",
+  "SiteName": "Reddit Python",
   "SiteLink": "https://www.reddit.com/r/Python/",
-  "SiteRssLink": "https://www.reddit.com/r/Python/.rss"
+  "SiteRssLink": "https://www.reddit.com/r/Python/.rss",
+  "Xpath": {
+    "ListXpath": "",
+    "UrlXpath": "",
+    "TitleXpath": "",
+    "PubDateXpath": ""
+  }
 }
