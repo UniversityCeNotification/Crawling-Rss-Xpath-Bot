@@ -1,16 +1,18 @@
-from lxml import html
-import requests
+""" Crawling url links """
 import json
 import os
+import requests
 import feedparser
+from lxml import html
 from pymongo import MongoClient
 from dotenv import DotEnv
-dotenv = DotEnv('.env')
-client = MongoClient(dotenv.get('MongoDbUri', 'mongodb://localhost:27017'))
-db = client[dotenv.get('MongoDbName', 'rsscrawler')] # which database
-crawlers = db.crawlers  # which collection
+DOTENV = DotEnv('.env')
+CLIENT = MongoClient(DOTENV.get('MongoDbUri', 'mongodb://localhost:27017'))
+DB = CLIENT[DOTENV.get('MongoDbName', 'rsscrawler')]  # which database
+CRAWLERS = DB.crawlers  # which collection
 
-class bcolors:
+class Bcolors:
+    """ colorize the output """
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
@@ -20,69 +22,82 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def pushRedis(data):
-    return
+def push_redis(data):
+    """ pushing data to redis """
+    return data
 
-def writeFile(data):
-    return
+def write_file(data):
+    """ writing data to file """
+    return data
 
-def insertMongoDb(data):
-    result = crawlers.find_one({'link': data['link']})
+def insert_mongo_db(data):
+    """ inserting data to mongodb """
+    result = CRAWLERS.find_one({'link': data['link']})
     if not result:
         print('New Link crawled and inserted mongodb')
-        crawlers.insert_one(data)
+        CRAWLERS.insert_one(data)
 
-def crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath):
-    page = requests.get(SiteLink)
+def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath):
+    """ crawling url with xpaths """
+    page = requests.get(site_link)
     tree = html.fromstring(page.content)
-    items = tree.xpath(ListXpath)
+    items = tree.xpath(list_xpath)
     for item in items:
-        url = item.xpath(UrlXpath)[0]
-        title = item.xpath(TitleXpath)[0]
+        url = item.xpath(url_xpath)[0]
+        title = item.xpath(title_xpath)[0]
         data = {
             'title': title,
             'link': url,
             'status': 'new'
         }
-        insertMongoDb(data)
+        insert_mongo_db(data)
 
-    print(bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + bcolors.OKGREEN)
+    print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
 
-def crawlRss(url):
+def crawl_with_rss(url):
+    """ crawling with rss link """
     if url == '' or not url.startswith('http'):
-        print(bcolors.FAIL + 'Error: url can not be empty string or url should startwith http' + bcolors.ENDC)
+        print(
+            Bcolors.FAIL +
+            'Error: url can not be empty string or url should startwith http' +
+            Bcolors.ENDC
+        )
         return
-    d = feedparser.parse(url)
-    for entry in d['entries']:
+    rss = feedparser.parse(url)
+    for entry in rss['entries']:
         data = {
             'title': entry['title'],
             'link': entry['link'],
             'status': 'new'
         }
-        insertMongoDb(data)
+        insert_mongo_db(data)
 
-    print(bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + bcolors.OKGREEN)
+    print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
 
 if __name__ == '__main__':
-    print(bcolors.OKBLUE + '\n[*] Program Started' + bcolors.ENDC)
-    Files = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'empty.json']
-    print(Files)
-    for File in Files:
+    print(Bcolors.OKBLUE + '\n[*] Program Started' + Bcolors.ENDC)
+    FILES = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'empty.json']
+    print(FILES)
+    for File in FILES:
         print(File)
         with open(File) as FileJsonData:
-            d = json.load(FileJsonData)
-            SiteName = d.get('SiteName', 'Nope')
-            SiteLink = d.get('SiteLink', 'Nope')
-            SiteRssLink = d.get('SiteRssLink', 'Nope')
-            Xpath = d.get('Xpath', 'Nope')
+            site = json.load(FileJsonData)
+            SiteName = site.get('SiteName', 'Nope')
+            SiteLink = site.get('SiteLink', 'Nope')
+            SiteRssLink = site.get('SiteRssLink', 'Nope')
+            Xpath = site.get('Xpath', 'Nope')
             ListXpath = Xpath.get('ListXpath', 'Nope')
             UrlXpath = Xpath.get('UrlXpath', 'Nope')
             TitleXpath = Xpath.get('TitleXpath', 'Nope')
-            print(bcolors.OKGREEN + '[+] Crawling Site:\n'+
-                  ' SiteName: ' + SiteName +
-                  ' | SiteLink: ' + SiteLink +
-                  ' | SiteRssLink: ' + SiteRssLink + bcolors.ENDC)
+            print(
+                Bcolors.OKGREEN +
+                '[+] Crawling Site:\n'+
+                ' SiteName: ' + SiteName +
+                ' | SiteLink: ' + SiteLink +
+                ' | SiteRssLink: ' + SiteRssLink +
+                Bcolors.ENDC
+            )
             if not SiteRssLink == '':
-                crawlRss(SiteRssLink)
+                crawl_with_rss(SiteRssLink)
             else:
-                crawlXpath(SiteLink, ListXpath, UrlXpath, TitleXpath)
+                crawl_with_xpath(SiteLink, ListXpath, UrlXpath, TitleXpath)
