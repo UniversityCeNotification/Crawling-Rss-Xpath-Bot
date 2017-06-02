@@ -62,7 +62,7 @@ def feedfinder(url):
     print(url)
     raw = False
     try:
-        raw = requests.get(url).content
+        raw = requests.get(url, timeout=10.0).content
     except Exception as e:
         return 'Website doesn\'t exists.'
 
@@ -98,6 +98,7 @@ def feedfinder(url):
             resp = requests.get(link, timeout=10.0)
         except Exception as e:
             print("Timeout when reading RSS %s", link, ' e:', e)
+            continue
 
         content = io.BytesIO(resp.content)
 
@@ -108,7 +109,7 @@ def feedfinder(url):
 
     site = {}
     site['SiteName'] = tree.xpath('//title/text()')[0]
-    site['SiteRssLink'] = result[0]
+    site['SiteRssLink'] = result[0] if len(result) > 0 else ''
     return site
 
 
@@ -142,9 +143,13 @@ def handle(msg):
             print(site)
             print(jsonname)
             # Writing JSON data
-            with open('../sites/site.json', 'w') as f:
+            with open('../sites/' + jsonname + '.json', 'w') as f:
                 json.dump(site, f, indent=2)
-            bot.sendMessage(chat_id, 'Added your site')
+
+            if site['SiteRssLink'] == '':
+                bot.sendMessage(chat_id, 'Please insert xpath for this site, like "/updatesite listxpath <site-name>"')
+            else:
+                bot.sendMessage(chat_id, 'Added your site')
     else:
         print('not text')
 # Main Section
