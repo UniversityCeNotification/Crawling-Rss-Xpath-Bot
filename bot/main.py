@@ -17,6 +17,7 @@ TOKEN = DOTENV.get('TelegramToken', '') #sys.argv[1]  # get token from command-l
 
 # Functions
 def create_user_object(who, date):
+    """ creating user object from empty user.json """
     with open('../defaults/user.json') as empty_user_json:
         user = json.load(empty_user_json)
         user['id'] = who['id']
@@ -26,16 +27,30 @@ def create_user_object(who, date):
         user['createdAt'] = date
         return user
 
+def insert_user_mongo_db(user):
+    """ inserting user to mongodb """
+    result = USERS.find_one({'username': user['username']})
+    if not result:
+        print(user)
+        print('New User added!')
+        USERS.insert_one(user)
+        return 1
+    return -1
 
+# Telebot handle function
 def handle(msg):
+    """ handling telegram messages """
     content_type, chat_type, chat_id = telepot.glance(msg)
     print(content_type, chat_type, chat_id)
 
     if content_type == 'text':
          if re.search('^/start$', msg['text']):
             user = create_user_object(msg['from'], msg['date'])
-            print(user)
-            bot.sendMessage(chat_id, 'We create your account!')
+            result = insert_user_mongo_db(user)
+            if result == 1:
+                bot.sendMessage(chat_id, 'We create your account!')
+            else:
+                bot.sendMessage(chat_id, 'You already have a account!')
 
 # Main Section
 if __name__ == '__main__':
