@@ -6,7 +6,7 @@ import feedparser
 from lxml import html
 from pymongo import MongoClient
 from dotenv import DotEnv
-DOTENV = DotEnv('.env')
+DOTENV = DotEnv('../.env')
 CLIENT = MongoClient(DOTENV.get('MongoDbUri', 'mongodb://localhost:27017'))
 DB = CLIENT[DOTENV.get('MongoDbName', 'rsscrawler')]  # which database
 CRAWLERS = DB.crawlers  # which collection
@@ -80,7 +80,7 @@ def crawl_with_rss(url):
 
 if __name__ == '__main__':
     print(Bcolors.OKBLUE + '\n[*] Program Started' + Bcolors.ENDC)
-    FILES = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'empty.json']
+    FILES = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'siteEmpty.json']
     print(FILES)
     for File in FILES:
         print(File)
