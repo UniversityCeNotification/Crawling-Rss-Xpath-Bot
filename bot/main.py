@@ -1,6 +1,11 @@
 import json
 import re
 import time
+import requests
+import feedparser
+import io
+from lxml import html
+from urllib.parse import urljoin
 import telepot
 from telepot.loop import MessageLoop
 from dotenv import DotEnv
@@ -52,6 +57,60 @@ def insert_user_mongo_db(user):
         return 1
     return -1
 
+def feedfinder(url):
+    """ https://gist.github.com/pleycpl/46953ff26e7da165c9f20dfbe1cd8256 """
+    print(url)
+    raw = False
+    try:
+        raw = requests.get(url).content
+    except Exception as e:
+        return 'Website doesn\'t exists.'
+
+    if not raw:
+        return 'Lxml doesn\'t work.'
+
+    result = []
+    possibleFeeds = []
+    tree = html.fromstring(raw)
+    feedUrls = tree.xpath("//link[@rel='alternate']")
+    if feedUrls:
+        for feed in feedUrls:
+            t = feed.xpath('@type')
+            if t:
+                t = t[0]
+                if "rss" in t or "xml" in t:
+                    href = feed.xpath('@href')
+                    if href:
+                        href = href[0]
+                        possibleFeeds.append(urljoin(url, href))
+
+    atags = tree.xpath("//a")
+    for a in atags:
+        href = a.xpath('@href')
+        if href:
+            href = href[0]
+            if "xml" in href or "rss" in href or "feed" in href:
+                possibleFeeds.append(urljoin(url, href))
+
+    for link in list(set(possibleFeeds)):
+        # Thanks for https://stackoverflow.com/questions/9772691/feedparser-with-timeout
+        try:
+            resp = requests.get(link, timeout=10.0)
+        except Exception as e:
+            print("Timeout when reading RSS %s", link, ' e:', e)
+
+        content = io.BytesIO(resp.content)
+
+        f = feedparser.parse(content)
+        if len(f.entries) > 0:
+            if url not in result:
+                result.append(link)
+
+    site = {}
+    site['SiteName'] = tree.xpath('//title/text()')[0]
+    site['SiteRssLink'] = result[0]
+    return site
+
 
 # Telebot handle function
 def handle(msg):
@@ -71,8 +130,15 @@ def handle(msg):
 		elif re.search('^/addsite (.*)$', msg['text']):
 			site = {}
 			site['SiteLink'] = re.search('^/addsite (.*)$', msg['text']).group(1)
-			print(site)
 			site = create_site_object(site)
+			result = feedfinder(site['SiteLink'])
+			if isinstance(result, str):
+				bot.sendMessage(chat_id, result)
+				return
+
+			site['SiteName'] = result['SiteName']
+			site['SiteRssLink'] = result['SiteRssLink']
+			print(site)
 			# Writing JSON data
 			with open('../sites/site.json', 'w') as f:
 				json.dump(site, f, indent=2)
