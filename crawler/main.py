@@ -80,7 +80,7 @@ def crawl_with_rss(url):
 
 if __name__ == '__main__':
     print(Bcolors.OKBLUE + '\n[*] Program Started' + Bcolors.ENDC)
-    FILES = ['sites/'+ File for File in os.listdir('sites') if File.endswith('.json') and File != 'siteEmpty.json']
+    FILES = ['../sites/'+ File for File in os.listdir('../sites') if File.endswith('.json')]
     print(FILES)
     for File in FILES:
         print(File)
