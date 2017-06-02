@@ -114,37 +114,39 @@ def feedfinder(url):
 
 # Telebot handle function
 def handle(msg):
-	""" handling telegram messages """
-	content_type, chat_type, chat_id = telepot.glance(msg)
-	print(content_type, chat_type, chat_id)
+    """ handling telegram messages """
+    content_type, chat_type, chat_id = telepot.glance(msg)
+    print(content_type, chat_type, chat_id)
 
-	if content_type == 'text':
-		if re.search('^/start$', msg['text']):
-			user = create_user_object(msg['from'], msg['date'])
-			result = insert_user_mongo_db(user)
-			if result == 1:
-				bot.sendMessage(chat_id, 'We create your account!')
-			else:
-				bot.sendMessage(chat_id, 'You already have a account!')
+    if content_type == 'text':
+        if re.search('^/start$', msg['text']):
+            user = create_user_object(msg['from'], msg['date'])
+            result = insert_user_mongo_db(user)
+            if result == 1:
+                bot.sendMessage(chat_id, 'We create your account!')
+            else:
+                bot.sendMessage(chat_id, 'You already have a account!')
 
-		elif re.search('^/addsite (.*)$', msg['text']):
-			site = {}
-			site['SiteLink'] = re.search('^/addsite (.*)$', msg['text']).group(1)
-			site = create_site_object(site)
-			result = feedfinder(site['SiteLink'])
-			if isinstance(result, str):
-				bot.sendMessage(chat_id, result)
-				return
+        elif re.search('^/addsite (.*)$', msg['text']):
+            site = {}
+            site['SiteLink'] = re.search('^/addsite (.*)$', msg['text']).group(1)
+            site = create_site_object(site)
+            result = feedfinder(site['SiteLink'])
+            if isinstance(result, str):
+                bot.sendMessage(chat_id, result)
+                return
 
-			site['SiteName'] = result['SiteName']
-			site['SiteRssLink'] = result['SiteRssLink']
-			print(site)
-			# Writing JSON data
-			with open('../sites/site.json', 'w') as f:
-				json.dump(site, f, indent=2)
-			bot.sendMessage(chat_id, 'Added your site')
-	else:
-		print('not text')
+            site['SiteName'] = result['SiteName']
+            site['SiteRssLink'] = result['SiteRssLink']
+            jsonname = site['SiteLink'].replace('https://', '').replace('http://', '').replace('.', '_').replace('/', '_')
+            print(site)
+            print(jsonname)
+            # Writing JSON data
+            with open('../sites/site.json', 'w') as f:
+                json.dump(site, f, indent=2)
+            bot.sendMessage(chat_id, 'Added your site')
+    else:
+        print('not text')
 # Main Section
 if __name__ == '__main__':
     bot = telepot.Bot(TOKEN)
