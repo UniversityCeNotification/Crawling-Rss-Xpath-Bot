@@ -147,7 +147,7 @@ def handle(msg):
                 json.dump(site, f, indent=2)
 
             if site['SiteRssLink'] == '':
-                bot.sendMessage(chat_id, 'Please insert xpath for this site, like "/updatesite listxpath <site-name>"')
+                bot.sendMessage(chat_id, 'Please insert xpath for this site,like \n/updatesite listxpath <site-name>')
             else:
                 bot.sendMessage(chat_id, 'Added your site')
     else:
