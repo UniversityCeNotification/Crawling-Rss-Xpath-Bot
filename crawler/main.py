@@ -32,11 +32,12 @@ def write_file(data):
 
 def insert_mongo_db(data):
     """ inserting data to mongodb """
-    result = CRAWLERS.find_one({'link': data['link']})
-    if not result:
-        print('New Link crawled and inserted mongodb')
-        print(data)
-        CRAWLERS.insert_one(data)
+    if not data == {}:
+        result = CRAWLERS.find_one({'link': data['link']})
+        if not result:
+            print('New Link crawled and inserted mongodb')
+            print(data)
+            CRAWLERS.insert_one(data)
 
 def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpath):
     """ crawling url with xpaths """
