@@ -34,8 +34,8 @@ def insert_mongo_db(data):
     """ inserting data to mongodb """
     result = CRAWLERS.find_one({'link': data['link']})
     if not result:
-        print(data)
         print('New Link crawled and inserted mongodb')
+        print(data)
         CRAWLERS.insert_one(data)
 
 def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpath):
@@ -68,13 +68,19 @@ def crawl_with_rss(url):
         return
     rss = feedparser.parse(url)
     for entry in rss['entries']:
-        data = {
-            'title': entry['title'],
-            'link': entry['link'],
-            'pubdate': entry['updated'],
-            'status': 'new'
-        }
-        insert_mongo_db(data)
+        data = {}
+        try:
+            data = {
+                'title': entry['title'],
+                'link': entry['link'],
+                'pubdate': entry['updated'],
+                'status': 'new'
+            }
+            insert_mongo_db(data)
+        except Exception as e:
+            print("Error in crawl_with_rss:", entry)
+            print(data)
+            print(e)
 
     print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
 
