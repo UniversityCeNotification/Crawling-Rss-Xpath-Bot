@@ -57,6 +57,21 @@ def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpat
 
     print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
 
+def general_rss_content_parse(entry):
+    data = {}
+    try:
+        data = {
+            'title': entry['title'],
+            'link': entry['link'],
+            'pubdate': entry['updated'],
+            'status': 'new'
+        }
+    except Exception as e:
+        print("Error in crawl_with_rss:", entry)
+        print(data)
+        print(e)
+    return data
+
 def crawl_with_rss(url):
     """ crawling with rss link """
     if url == '' or not url.startswith('http'):
@@ -68,19 +83,8 @@ def crawl_with_rss(url):
         return
     rss = feedparser.parse(url)
     for entry in rss['entries']:
-        data = {}
-        try:
-            data = {
-                'title': entry['title'],
-                'link': entry['link'],
-                'pubdate': entry['updated'],
-                'status': 'new'
-            }
-            insert_mongo_db(data)
-        except Exception as e:
-            print("Error in crawl_with_rss:", entry)
-            print(data)
-            print(e)
+        data = general_rss_content_parse(entry)
+        insert_mongo_db(data)
 
     print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
 
