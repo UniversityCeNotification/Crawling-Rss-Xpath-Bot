@@ -58,20 +58,21 @@ def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpat
 
     print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
 
+def get_value_in_dict(d, *args):
+    for arg in args:
+        try:
+            return d[arg]
+        except:
+            print(arg)
+            continue
+
 def general_rss_content_parse(entry):
-    data = {}
-    try:
-        data = {
-            'title': entry['title'],
-            'link': entry['link'],
-            'pubdate': entry['updated'],
-            'status': 'new'
-        }
-    except Exception as e:
-        print("Error in crawl_with_rss:", entry)
-        print(data)
-        print(e)
-    return data
+    return {
+        'title': get_value_in_dict(entry, 'title'),
+        'link': get_value_in_dict(entry, 'link'),
+        'pubdate': get_value_in_dict(entry, 'updated', 'summary'),
+        'status': 'new'
+    }
 
 def crawl_with_rss(url):
     """ crawling with rss link """
