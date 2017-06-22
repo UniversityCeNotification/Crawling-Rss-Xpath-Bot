@@ -56,8 +56,6 @@ def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpat
         }
         insert_mongo_db(data)
 
-    print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
-
 def get_value_in_dict(d, *args):
     for arg in args:
         try:
@@ -88,8 +86,6 @@ def crawl_with_rss(url):
         data = general_rss_content_parse(entry)
         insert_mongo_db(data)
 
-    print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
-
 if __name__ == '__main__':
     print(Bcolors.OKBLUE + '\n[*] Program Started' + Bcolors.ENDC)
     FILES = ['../sites/'+ File for File in os.listdir('../sites') if File.endswith('.json')]
@@ -106,5 +102,7 @@ if __name__ == '__main__':
             )
             if not site['SiteRssLink'] == '':
                 crawl_with_rss(site['SiteRssLink'])
+                print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
             else:
                 crawl_with_xpath(site['SiteLink'], site['Xpath']['ListXpath'], site['Xpath']['UrlXpath'], site['Xpath']['TitleXpath'], site['Xpath']['PubDateXpath'])
+                print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
