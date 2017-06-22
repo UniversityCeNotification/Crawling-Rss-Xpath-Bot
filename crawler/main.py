@@ -98,23 +98,15 @@ if __name__ == '__main__':
         print(File)
         with open(File) as FileJsonData:
             site = json.load(FileJsonData)
-            SiteName = site.get('SiteName', 'Nope')
-            SiteLink = site.get('SiteLink', 'Nope')
-            SiteRssLink = site.get('SiteRssLink', 'Nope')
-            Xpath = site.get('Xpath', 'Nope')
-            ListXpath = Xpath.get('ListXpath', 'Nope')
-            UrlXpath = Xpath.get('UrlXpath', 'Nope')
-            TitleXpath = Xpath.get('TitleXpath', 'Nope')
-            PubDateXpath = Xpath.get('PubDateXpath', 'Nope')
             print(
                 Bcolors.OKGREEN +
                 '[+] Crawling Site:\n'+
-                ' Name: ' + SiteName +
-                ' | Link: ' + SiteLink +
-                ' | RssLink: ' + SiteRssLink +
+                ' Name: ' + site['SiteName'] +
+                ' | Link: ' + site['SiteLink'] +
+                ' | RssLink: ' + site['SiteRssLink'] +
                 Bcolors.ENDC
             )
-            if not SiteRssLink == '':
-                crawl_with_rss(SiteRssLink)
+            if not site['SiteRssLink'] == '':
+                crawl_with_rss(site['SiteRssLink'])
             else:
-                crawl_with_xpath(SiteLink, ListXpath, UrlXpath, TitleXpath, PubDateXpath)
+                crawl_with_xpath(site['SiteLink'], site['ListXpath'], site['UrlXpath'], site['TitleXpath'], site['PubDateXpath'])
