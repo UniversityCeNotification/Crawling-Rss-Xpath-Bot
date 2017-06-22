@@ -141,6 +141,9 @@ def handle(msg):
                 bot.sendMessage(chat_id, 'Please insert xpath for this site,like \n/updatesite listxpath <site-name>')
             else:
                 bot.sendMessage(chat_id, 'Added your site')
+        
+        else:
+            bot.sendMessage(chat_id, msg['text'] + ' What are you saying?')
     else:
         print('not text')
 # Main Section
