@@ -21,6 +21,22 @@ class Bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    
+    @staticmethod
+    def OKBLUEFUNC(message):
+        return Bcolors.OKBLUE + message + Bcolors.ENDC
+
+    @staticmethod
+    def OKGREENFUNC(message):
+        return Bcolors.OKGREEN + message + Bcolors.ENDC
+
+    @staticmethod
+    def FAILFUNC(message):
+        return Bcolors.FAIL + message + Bcolors.ENDC
+
+    @staticmethod
+    def WARNINGFUNC(message)
+        return Bcolors.WARNING + message + Bcolors.ENDC
 
 def push_redis(data):
     """ pushing data to redis """
@@ -75,11 +91,7 @@ def general_rss_content_parse(entry):
 def crawl_with_rss(url):
     """ crawling with rss link """
     if url == '' or not url.startswith('http'):
-        print(
-            Bcolors.FAIL +
-            'Error: url can not be empty string or url should startwith http' +
-            Bcolors.ENDC
-        )
+        print(Bcolors.FAIL('Error: url can not be empty string or url should startwith http'))
         return
     rss = feedparser.parse(url)
     for entry in rss['entries']:
@@ -87,7 +99,7 @@ def crawl_with_rss(url):
         insert_mongo_db(data)
 
 if __name__ == '__main__':
-    print(Bcolors.OKBLUE + '\n[*] Program Started' + Bcolors.ENDC)
+    print(Bcolors.OKBLUEFUNC('\n[*] Program Started'))
     FILES = ['../sites/'+ File for File in os.listdir('../sites') if File.endswith('.json')]
     print(FILES)
     for File in FILES:
@@ -95,14 +107,10 @@ if __name__ == '__main__':
         with open(File) as FileJsonData:
             site = json.load(FileJsonData)
             print(site)
-            print(
-                Bcolors.OKGREEN +
-                '[+] Crawling Site:\n Name: {} | Link: {} | RssLink: {}'.format(site['SiteName'], site['SiteLink'], site['SiteRssLink']) +
-                Bcolors.ENDC
-            )
+            print(Bcolors.OKGREENFUNC('[+] Crawling Site:\n Name: {} | Link: {} | RssLink: {}'.format(site['SiteName'], site['SiteLink'], site['SiteRssLink'])))
             if not site['SiteRssLink'] == '':
                 crawl_with_rss(site['SiteRssLink'])
-                print(Bcolors.OKGREEN + '[-] Crawling Rss Site Finished' + Bcolors.ENDC)
+                print(Bcolors.OKGREENFUNC('[-] Crawling Rss Site Finished'))
             else:
                 crawl_with_xpath(site['SiteLink'], site['Xpath']['ListXpath'], site['Xpath']['UrlXpath'], site['Xpath']['TitleXpath'], site['Xpath']['PubDateXpath'])
-                print(Bcolors.OKGREEN + '[-] Crawling Xpath Site Finished' + Bcolors.OKGREEN)
+                print(Bcolors.OKGREENFUNC('[-] Crawling Xpath Site Finished'))
