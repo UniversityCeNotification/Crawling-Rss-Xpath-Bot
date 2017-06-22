@@ -32,18 +32,9 @@ def create_user_object(who, date):
         user['createdAt'] = date
         return user
 
-def create_site_object(site):
+def get_empty_site_object():
     with open('../defaults/site.json') as empty_site_json:
         empty_site = json.load(empty_site_json)
-        empty_site['SiteName'] = site.get('SiteName', '')
-        empty_site['SiteLink'] = site.get('SiteLink', '')
-        empty_site['SiteRssLink'] = site.get('SiteRssLink', '')
-        empty_xpath = empty_site['Xpath']
-        site_xpath = site.get('Xpath', {})
-        empty_xpath['ListXpath'] = site_xpath.get('ListXpath', '')
-        empty_xpath['UrlXpath'] = site_xpath.get('UrlXpath', '')
-        empty_xpath['TitleXpath'] = site_xpath.get('TitleXpath', '')
-        empty_xpath['PubDateXpath'] = site_xpath.get('PubDateXpath', '')
         return empty_site
 
 # Writing Mongodb functions
@@ -129,14 +120,14 @@ def handle(msg):
                 bot.sendMessage(chat_id, 'You already have a account!')
 
         elif re.search('^/addsite (.*)$', msg['text']):
-            site = {}
-            site['SiteLink'] = re.search('^/addsite (.*)$', msg['text']).group(1)
-            site = create_site_object(site)
-            result = feedfinder(site['SiteLink'])
+            link = re.search('^/addsite (.*)$', msg['text']).group(1)
+            result = feedfinder(link)
             if isinstance(result, str):
                 bot.sendMessage(chat_id, result)
                 return
-
+            
+            site = get_empty_site_object()
+            site['SiteLink'] = link
             site['SiteName'] = result['SiteName']
             site['SiteRssLink'] = result['SiteRssLink']
             jsonname = site['SiteLink'].replace('https://', '').replace('http://', '').replace('.', '_').replace('/', '_')
