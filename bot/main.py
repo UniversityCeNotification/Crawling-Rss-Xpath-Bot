@@ -48,6 +48,10 @@ def insert_user_mongo_db(user):
         return 1
     return -1
 
+# Deleting Mongodb functions
+def delete_user_mongo_db(username):
+    USERS.remove({'username': username})
+
 def feedfinder(url):
     """ https://gist.github.com/pleycpl/46953ff26e7da165c9f20dfbe1cd8256 """
     print(url)
@@ -142,6 +146,10 @@ def handle(msg):
             else:
                 bot.sendMessage(chat_id, 'Added your site')
         
+        elif re.search('^/deleteme$', msg['text']):
+            delete_user_mongo_db(msg['from']['username'])
+            bot.sendMessage(chat_id, 'Deleted your account!')
+
         else:
             bot.sendMessage(chat_id, msg['text'] + ' What are you saying?')
     else:
