@@ -13,6 +13,7 @@ DOTENV = DotEnv('../.env')
 CLIENT = MongoClient(DOTENV.get('MongoDbUri', 'mongodb://localhost:27017'))
 DB = CLIENT[DOTENV.get('MongoDbName', 'rsscrawler')]  # which database
 CRAWLERS = DB.crawlers  # which collection
+SITES_DIRECTORY = '../sites/'
 
 def push_redis(data):
     """ pushing data to redis """
@@ -76,7 +77,7 @@ def crawl_with_rss(url):
 
 if __name__ == '__main__':
     print(Bcolors.OKBLUEFUNC('\n[*] Program Started'))
-    FILES = ['../sites/'+ File for File in os.listdir('../sites') if File.endswith('.json')]
+    FILES = [SITES_DIRECTORY + File for File in os.listdir(SITES_DIRECTORY) if File.endswith('.json')]
     print(FILES)
     for File in FILES:
         print(File)
