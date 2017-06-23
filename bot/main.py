@@ -20,10 +20,13 @@ USERS = DB.users  # which collection
 
 TOKEN = DOTENV.get('TelegramToken', '') #sys.argv[1]  # get token from command-line
 
+SITES_DIRECTORY = '../sites/'
+DEFAULTS_DIRECTORY = '../defaults/'
+
 # Object Creator functions
 def create_user_object(who, date):
     """ creating user object from empty user.json """
-    with open('../defaults/user.json') as empty_user_json:
+    with open(DEFAULTS_DIRECTORY + 'user.json') as empty_user_json:
         user = json.load(empty_user_json)
         user['id'] = who['id']
         user['username'] = who['username']
@@ -33,7 +36,7 @@ def create_user_object(who, date):
         return user
 
 def get_empty_site_object():
-    with open('../defaults/site.json') as empty_site_json:
+    with open(DEFAULTS_DIRECTORY + 'site.json') as empty_site_json:
         empty_site = json.load(empty_site_json)
         return empty_site
 
@@ -138,7 +141,7 @@ def handle(msg):
             print(site)
             print(jsonname)
             # Writing JSON data
-            with open('../sites/' + jsonname + '.json', 'w') as f:
+            with open(SITES_DIRECTORY + jsonname + '.json', 'w') as f:
                 json.dump(site, f, indent=2)
 
             if site['SiteRssLink'] == '':
