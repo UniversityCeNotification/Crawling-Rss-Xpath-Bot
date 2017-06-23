@@ -30,6 +30,15 @@ python main.py &
 deactivate
 cd -
 
+# Notification start
+cd notification
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python main.py &
+deactivate
+cd -
+
 # Crawling start
 cd crawler
 virtualenv venv
