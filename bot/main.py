@@ -133,12 +133,14 @@ def handle(msg):
                 bot.sendMessage(chat_id, result)
                 return
             
+            # chat_id and msg['from']['id']) is same
             USERS.update_one({'username': msg['from']['username']}, {'$addToSet': { 'sites': link }})
 
             site = get_empty_site_object()
             site['SiteLink'] = link
             site['SiteName'] = result['SiteName']
             site['SiteRssLink'] = result['SiteRssLink']
+            site['Init'] = 'True'
             jsonname = site['SiteLink'].replace('https://', '').replace('http://', '').replace('.', '_').replace('/', '_')
             print(site)
             print(jsonname)
