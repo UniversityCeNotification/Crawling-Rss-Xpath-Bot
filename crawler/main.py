@@ -23,13 +23,14 @@ def write_file(data):
     """ writing data to file """
     return data
 
-def insert_mongo_db(data):
+def insert_mongo_db(data, siteurl):
     """ inserting data to mongodb """
     if not data == {}:
         result = CRAWLERS.find_one({'link': data['link']})
         if not result:
             print('New Link crawled and inserted mongodb')
             print(data)
+            data['siteurl'] = siteurl
             CRAWLERS.insert_one(data)
 
 def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpath):
@@ -47,7 +48,7 @@ def crawl_with_xpath(site_link, list_xpath, url_xpath, title_xpath, pubdate_xpat
             'pubdate': pubdate,
             'status': 'new'
         }
-        insert_mongo_db(data)
+        insert_mongo_db(data, site_link)
 
 def get_value_in_dict(d, *args):
     for arg in args:
@@ -65,15 +66,15 @@ def general_rss_content_parse(entry):
         'status': 'new'
     }
 
-def crawl_with_rss(url):
+def crawl_with_rss(rssurl, siteurl):
     """ crawling with rss link """
-    if url == '' or not url.startswith('http'):
+    if rssurl == '' or not rssurl.startswith('http'):
         print(Bcolors.FAIL('Error: url can not be empty string or url should startwith http'))
         return
-    rss = feedparser.parse(url)
+    rss = feedparser.parse(rssurl)
     for entry in rss['entries']:
         data = general_rss_content_parse(entry)
-        insert_mongo_db(data)
+        insert_mongo_db(data, siteurl)
 
 if __name__ == '__main__':
     print(Bcolors.OKBLUEFUNC('\n[*] Program Started'))
@@ -86,7 +87,7 @@ if __name__ == '__main__':
             print(site)
             print(Bcolors.OKGREENFUNC('[+] Crawling Site:\n Name: {} | Link: {} | RssLink: {}'.format(site['SiteName'], site['SiteLink'], site['SiteRssLink'])))
             if not site['SiteRssLink'] == '':
-                crawl_with_rss(site['SiteRssLink'])
+                crawl_with_rss(site['SiteRssLink'], site['SiteLink'])
                 print(Bcolors.OKGREENFUNC('[-] Crawling Rss Site Finished'))
             else:
                 crawl_with_xpath(site['SiteLink'], site['Xpath']['ListXpath'], site['Xpath']['UrlXpath'], site['Xpath']['TitleXpath'], site['Xpath']['PubDateXpath'])
