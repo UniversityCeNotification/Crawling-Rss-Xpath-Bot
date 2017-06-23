@@ -140,7 +140,6 @@ def handle(msg):
             site['SiteLink'] = link
             site['SiteName'] = result['SiteName']
             site['SiteRssLink'] = result['SiteRssLink']
-            site['Init'] = 'True'
             jsonname = site['SiteLink'].replace('https://', '').replace('http://', '').replace('.', '_').replace('/', '_')
             print(site)
             print(jsonname)
