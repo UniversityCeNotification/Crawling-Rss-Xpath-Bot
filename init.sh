@@ -21,23 +21,21 @@ if [[ "$status" = "n" ]]; then
   echo "TelegramToken='$token'" >> .env
 fi
 
-# Started Bot
-cd bot
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python main.py &
-deactivate
-cd -
+function start_python_code_background {
+  cd $1
+  virtualenv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+  python main.py &
+  deactivate
+  cd -
+}
+
+# Bot start
+start_python_code_background bot
 
 # Notification start
-cd notification
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python main.py &
-deactivate
-cd -
+start_python_code_background notification
 
 # Crawling start
 cd crawler
