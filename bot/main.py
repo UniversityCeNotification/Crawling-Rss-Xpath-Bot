@@ -133,6 +133,8 @@ def handle(msg):
                 bot.sendMessage(chat_id, result)
                 return
             
+            USERS.update_one({'username': msg['from']['username']}, {'$addToSet': { 'sites': link }})
+
             site = get_empty_site_object()
             site['SiteLink'] = link
             site['SiteName'] = result['SiteName']
