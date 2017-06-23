@@ -19,6 +19,15 @@ DEFAULTS_DIRECTORY = '../defaults/'
 
 def job():
     print("I'm working...", time.strftime('%X %x %Z'))
+    users = list(USERS.find())
+    news = list(CRAWLERS.find({'status':'new'}))
+    for new in news:
+        message = new['link']
+        for user in users:
+            if new['siteurl'] in user['sites']:
+                bot.sendMessage(user['id'], message)
+
+        CRAWLERS.update_one({'_id': new['_id']}, {"$set": {'status': 'old'}}, upsert=False)
 
 if __name__ == '__main__':
     bot = telepot.Bot(TOKEN)
