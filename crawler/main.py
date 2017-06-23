@@ -6,37 +6,13 @@ import feedparser
 from lxml import html
 from pymongo import MongoClient
 from dotenv import DotEnv
+from util.bcolors import Bcolors
+
+### Global Variables
 DOTENV = DotEnv('../.env')
 CLIENT = MongoClient(DOTENV.get('MongoDbUri', 'mongodb://localhost:27017'))
 DB = CLIENT[DOTENV.get('MongoDbName', 'rsscrawler')]  # which database
 CRAWLERS = DB.crawlers  # which collection
-
-class Bcolors:
-    """ colorize the output """
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    
-    @staticmethod
-    def OKBLUEFUNC(message):
-        return Bcolors.OKBLUE + message + Bcolors.ENDC
-
-    @staticmethod
-    def OKGREENFUNC(message):
-        return Bcolors.OKGREEN + message + Bcolors.ENDC
-
-    @staticmethod
-    def FAILFUNC(message):
-        return Bcolors.FAIL + message + Bcolors.ENDC
-
-    @staticmethod
-    def WARNINGFUNC(message)
-        return Bcolors.WARNING + message + Bcolors.ENDC
 
 def push_redis(data):
     """ pushing data to redis """
