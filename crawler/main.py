@@ -94,3 +94,8 @@ if __name__ == '__main__':
             else:
                 crawl_with_xpath(site['Init'], site['SiteLink'], site['Xpath']['ListXpath'], site['Xpath']['UrlXpath'], site['Xpath']['TitleXpath'], site['Xpath']['PubDateXpath'])
                 print(Bcolors.OKGREENFUNC('[-] Crawling Xpath Site Finished'))
+
+            if site['Init'] == 'True':
+                site['Init'] = 'False'
+                with open(File, 'w') as f:
+                    json.dump(site, f, indent=2)
