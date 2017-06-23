@@ -7,5 +7,6 @@
     "UrlXpath": "",
     "TitleXpath": "",
     "PubDateXpath": ""
-  }
+  },
+  "Init": "True"
 }
